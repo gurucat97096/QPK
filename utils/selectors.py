@@ -135,6 +135,20 @@ class ParkingTicketSelectors:
     PAY_BUTTON_TEXT = "button:has-text('前往繳費')"
     SELECT_ALL = "input[type='checkbox'][id*='all'], .select-all"
     TOTAL_AMOUNT = ".total-amount, .amount, [class*='total']"
+    
+    # 付款方式下拉選單
+    PAYMENT_METHOD_SELECT = "#PaymentMethod"
+    PAYMENT_METHOD_CREDIT_CARD = "1"  # 信用卡
+    PAYMENT_METHOD_LINE_PAY = "4"  # LINE Pay
+    
+    # 發票存入方式下拉選單
+    INVOICE_OPTION_SELECT = "#InvoiceOptionString"
+    INVOICE_OPTION_BARCODE = "1-/A3RUA54"  # 手機條碼載具
+    INVOICE_OPTION_BARCODE_CUSTOM = "1"  # 手機條碼載具（自行輸入）
+    INVOICE_OPTION_CITIZEN_DIGITAL = "2"  # 輸入統一編號
+    INVOICE_OPTION_DONATION_919 = "4-919"  # 捐贈發票-愛心碼 919
+    INVOICE_OPTION_DONATION_8585 = "4-8585"  # 捐贈發票-愛心碼 8585
+    INVOICE_OPTION_DONATION_CUSTOM = "4"  # 捐贈發票自行輸入捐贈碼
 
 
 class CommonSelectors:

@@ -72,6 +72,12 @@ class TestPaymentE2E:
         
         # 步驟 5：點擊前往繳費
         parking_page.click_pay()
+        
+        # 步驟 6：選擇付款方式 - 信用卡
+        parking_page.select_payment_method("credit_card")
+        
+        # 步驟 7：選擇發票存入方式 - 手機條碼載具
+        parking_page.select_invoice_option("barcode")
     
     @pytest.mark.e2e
     @pytest.mark.payment

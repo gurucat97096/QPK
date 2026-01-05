@@ -12,14 +12,15 @@ class Settings:
     """測試套件設定。"""
     
     # 停車繳費網站 Base URL
-    BASE_URL: str = os.getenv("BASE_URL", "https://example.com")
+    BASE_URL: str = os.getenv("BASE_URL", "https://qpktest.qparking.com.tw")
     
-    # 登入帳密（請在 .env 設定，勿硬編碼）
-    USERNAME: str = os.getenv("TEST_USERNAME", "")
-    PASSWORD: str = os.getenv("TEST_PASSWORD", "")
+    # 登入帳密
+    USERNAME: str = os.getenv("TEST_USERNAME", "tidcedgar@gmail.com")
+    PASSWORD: str = os.getenv("TEST_PASSWORD", "edgar97096")
     
     # 測試資料
-    PLATE_NO: str = os.getenv("PLATE_NO", "")
+    PLATE_NO: str = os.getenv("PLATE_NO", "AU-TO")
+    
     
     # 信用卡測試資料（TapPay 測試卡）
     CARD_NUMBER: str = os.getenv("CARD_NUMBER", "4242424242424242")

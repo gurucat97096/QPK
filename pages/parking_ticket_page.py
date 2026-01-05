@@ -127,6 +127,53 @@ class ParkingTicketPage(BasePage):
         pay_btn.wait_for(state="visible", timeout=10000)
         pay_btn.click()
     
+    def select_payment_method(self, method: str = "credit_card") -> "ParkingTicketPage":
+        """選擇付款方式。
+        
+        Args:
+            method: 付款方式，可選 'credit_card' 或 'line_pay'
+        """
+        select_locator = self.page.locator(self.selectors.PAYMENT_METHOD_SELECT)
+        select_locator.wait_for(state="visible", timeout=10000)
+        
+        if method == "credit_card":
+            select_locator.select_option(value=self.selectors.PAYMENT_METHOD_CREDIT_CARD)
+        elif method == "line_pay":
+            select_locator.select_option(value=self.selectors.PAYMENT_METHOD_LINE_PAY)
+        else:
+            select_locator.select_option(value=method)
+        
+        return self
+    
+    def select_invoice_option(self, option: str = "barcode") -> "ParkingTicketPage":
+        """選擇發票存入方式。
+        
+        Args:
+            option: 發票存入方式，可選:
+                - 'barcode': 手機條碼載具（預設載具）
+                - 'barcode_custom': 手機條碼載具（自行輸入）
+                - 'citizen_digital': 輸入統一編號
+                - 'donation_919': 捐贈發票-愛心碼 919-創世基金會
+                - 'donation_8585': 捐贈發票-愛心碼 8585-家扶基金會
+                - 'donation_custom': 捐贈發票自行輸入捐贈碼
+        """
+        select_locator = self.page.locator(self.selectors.INVOICE_OPTION_SELECT)
+        select_locator.wait_for(state="visible", timeout=10000)
+        
+        option_map = {
+            "barcode": self.selectors.INVOICE_OPTION_BARCODE,
+            "barcode_custom": self.selectors.INVOICE_OPTION_BARCODE_CUSTOM,
+            "citizen_digital": self.selectors.INVOICE_OPTION_CITIZEN_DIGITAL,
+            "donation_919": self.selectors.INVOICE_OPTION_DONATION_919,
+            "donation_8585": self.selectors.INVOICE_OPTION_DONATION_8585,
+            "donation_custom": self.selectors.INVOICE_OPTION_DONATION_CUSTOM,
+        }
+        
+        value = option_map.get(option, option)
+        select_locator.select_option(value=value)
+        
+        return self
+    
     def get_total_amount(self) -> str:
         """取得應繳總金額文字。"""
         return self.page.locator(self.selectors.TOTAL_AMOUNT).text_content() or ""

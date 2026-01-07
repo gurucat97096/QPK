@@ -61,41 +61,66 @@ class PaymentSelectors:
 
 
 class PaymentFormSelectors:
-    """繳費表單頁面 selectors（待實作）。"""
+    """繳費表單頁面 selectors。"""
     
     PAYER_NAME = "input[name='payer_name']"
     PAYER_PHONE = "input[name='payer_phone']"
     PAYER_EMAIL = "input[name='payer_email']"
     SUBMIT_BUTTON = "button.submit-payment"
+    
+    # 下一步按鈕
+    PAYMENT_BUTTON = "#paymentButton"
+    
+    # 勾選未繳費項目
+    CHECK_UNPAID = "#checkUnpaid"
+    CHECK_UNPAID_BUTTON = "#checkUnpaidButton"
+    
+    # 選擇自行輸入信用卡資料的連結
+    ENTER_CREDIT_CARD_LINK = "a.border-success:has-text('自行輸入信用卡資料')"
 
 
 class CreditCardSelectors:
-    """TapPay 信用卡 iframe/欄位 selectors（待實作）。"""
+    """TapPay 信用卡欄位 selectors。"""
     
-    CARD_NUMBER_IFRAME = "iframe[name='card-number']"
-    CARD_NUMBER_INPUT = "input[name='cardnumber']"
+    # TapPay 欄位容器
+    CARD_NUMBER_CONTAINER = "#tappay-card-number"
+    CARD_EXPIRY_CONTAINER = "#tappay-expiration-date"
+    CARD_CVV_CONTAINER = "#tappay-ccv"
     
-    CARD_EXPIRY_IFRAME = "iframe[name='card-expiry']"
-    CARD_EXPIRY_INPUT = "input[name='exp-date']"
+    # TapPay iframe selectors (容器內的 iframe)
+    CARD_NUMBER_IFRAME = "#tappay-card-number iframe"
+    CARD_EXPIRY_IFRAME = "#tappay-expiration-date iframe"
+    CARD_CVV_IFRAME = "#tappay-ccv iframe"
     
-    CARD_CVV_IFRAME = "iframe[name='card-cvv']"
-    CARD_CVV_INPUT = "input[name='cvc']"
+    # iframe 內部的輸入欄位 (精確 ID)
+    CARD_NUMBER_INPUT = "#cc-number"
+    CARD_EXPIRY_INPUT = "#cc-exp"
+    CARD_CVV_INPUT = "#cc-ccv"
+    
+    # 確認送出按鈕
+    PAYMENT_BUTTON = "#paymentButton"
     
     PAY_BUTTON = "button.pay-now"
 
 
 class ThreeDSSelectors:
-    """TapPay 3DS 驗證頁面 selectors（待實作）。"""
+    """TapPay 3DS 驗證頁面 selectors。"""
     
-    VERIFICATION_IFRAME = "iframe.tappay-3ds"
-    OTP_INPUT = "input[name='otp']"
-    SUBMIT_OTP_BUTTON = "button.submit-otp"
+    # OTP 輸入欄位
+    OTP_INPUT = "#pin"
+    
+    # 送出按鈕
+    SUBMIT_BUTTON = "#send"
 
 
 class SuccessPageSelectors:
-    """繳費成功頁面 selectors（待實作）。"""
+    """繳費成功頁面 selectors。"""
     
-    SUCCESS_MESSAGE = ".payment-success"
+    # 繳費成功訊息
+    SUCCESS_MESSAGE = "text=繳費成功"
+    SUCCESS_TEXT = "繳費成功"
+    
+    # 備用 selectors
     TRANSACTION_ID = ".transaction-id"
     RECEIPT_BUTTON = "button.download-receipt"
 

@@ -78,6 +78,34 @@ class TestPaymentE2E:
         
         # 步驟 7：選擇發票存入方式 - 手機條碼載具
         parking_page.select_invoice_option("barcode")
+        
+        # 步驟 8：點擊下一步（繳費按鈕）
+        parking_page.click_payment_button()
+        
+        # 步驟 9：勾選未繳費項目
+        parking_page.check_unpaid()
+        
+        # 步驟 10：點擊確認未繳費按鈕
+        parking_page.click_check_unpaid_button()
+        
+        # 步驟 11：點擊「自行輸入信用卡資料」連結
+        parking_page.click_enter_credit_card_link()
+        
+        # 步驟 12：填寫信用卡資料
+        parking_page.fill_credit_card_info(
+            card_number=settings.CARD_NUMBER,
+            card_expiry=settings.CARD_EXPIRY,
+            card_cvv=settings.CARD_CVV,
+        )
+        
+        # 步驟 13：點擊確認送出
+        parking_page.submit_credit_card_payment()
+        
+        # 步驟 14：完成 3DS 驗證
+        parking_page.complete_3ds_verification(otp_code=settings.TAPPAY_3DS_CODE)
+        
+        # 步驟 15：驗證繳費成功
+        parking_page.assert_payment_success()
     
     @pytest.mark.e2e
     @pytest.mark.payment

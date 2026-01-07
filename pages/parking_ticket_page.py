@@ -5,7 +5,15 @@ import re
 from playwright.sync_api import Page, expect, TimeoutError as PlaywrightTimeoutError
 
 from pages.base_page import BasePage
-from utils.selectors import FooterNavSelectors, ParkingTicketSelectors, CommonSelectors
+from utils.selectors import (
+    FooterNavSelectors, 
+    ParkingTicketSelectors, 
+    CommonSelectors,
+    PaymentFormSelectors,
+    CreditCardSelectors,
+    ThreeDSSelectors,
+    SuccessPageSelectors,
+)
 
 
 class ParkingTicketPage(BasePage):
@@ -17,6 +25,10 @@ class ParkingTicketPage(BasePage):
         self.selectors = ParkingTicketSelectors
         self.footer = FooterNavSelectors
         self.common = CommonSelectors
+        self.payment_form = PaymentFormSelectors
+        self.credit_card = CreditCardSelectors
+        self.three_ds = ThreeDSSelectors
+        self.success_page = SuccessPageSelectors
     
     def navigate(self) -> "ParkingTicketPage":
         """直接導航至停車單頁面。"""
@@ -181,3 +193,110 @@ class ParkingTicketPage(BasePage):
     def assert_on_parking_ticket_page(self) -> None:
         """斷言已在停車單頁面。"""
         expect(self.page).to_have_url(re.compile(r".*ParkingTicket.*"), timeout=10000)
+    
+    # ============ 繳費流程方法 ============
+    
+    def click_payment_button(self) -> "ParkingTicketPage":
+        """點擊下一步（繳費按鈕）。"""
+        btn = self.page.locator(self.payment_form.PAYMENT_BUTTON)
+        btn.wait_for(state="visible", timeout=10000)
+        btn.click()
+        self.wait_page_ready()
+        return self
+    
+    def check_unpaid(self) -> "ParkingTicketPage":
+        """勾選未繳費項目。"""
+        checkbox = self.page.locator(self.payment_form.CHECK_UNPAID)
+        checkbox.wait_for(state="visible", timeout=10000)
+        if not checkbox.is_checked():
+            checkbox.click()
+        return self
+    
+    def click_check_unpaid_button(self) -> "ParkingTicketPage":
+        """點擊確認未繳費按鈕。"""
+        btn = self.page.locator(self.payment_form.CHECK_UNPAID_BUTTON)
+        btn.wait_for(state="visible", timeout=10000)
+        btn.click()
+        self.wait_page_ready()
+        return self
+    
+    def click_enter_credit_card_link(self) -> "ParkingTicketPage":
+        """點擊「自行輸入信用卡資料」連結。"""
+        link = self.page.locator(self.payment_form.ENTER_CREDIT_CARD_LINK)
+        link.wait_for(state="visible", timeout=10000)
+        link.click()
+        self.wait_page_ready()
+        return self
+    
+    def fill_credit_card_info(
+        self, 
+        card_number: str, 
+        card_expiry: str, 
+        card_cvv: str,
+    ) -> "ParkingTicketPage":
+        """填寫信用卡資料（TapPay iframe 內）。
+        
+        Args:
+            card_number: 信用卡號
+            card_expiry: 卡片到期日 (MM/YY)
+            card_cvv: 卡片安全碼
+        """
+        # 等待 TapPay iframe 載入
+        self.page.wait_for_selector(self.credit_card.CARD_NUMBER_IFRAME, state="attached", timeout=15000)
+        
+        # 填寫信用卡號
+        card_number_frame = self.page.frame_locator(self.credit_card.CARD_NUMBER_IFRAME)
+        card_number_input = card_number_frame.locator(self.credit_card.CARD_NUMBER_INPUT)
+        card_number_input.click()
+        card_number_input.press_sequentially(card_number, delay=100)
+        
+        # 填寫到期日
+        card_expiry_frame = self.page.frame_locator(self.credit_card.CARD_EXPIRY_IFRAME)
+        card_expiry_input = card_expiry_frame.locator(self.credit_card.CARD_EXPIRY_INPUT)
+        card_expiry_input.click()
+        card_expiry_input.press_sequentially(card_expiry.replace("/", ""), delay=100)
+        
+        # 填寫安全碼
+        card_cvv_frame = self.page.frame_locator(self.credit_card.CARD_CVV_IFRAME)
+        card_cvv_input = card_cvv_frame.locator(self.credit_card.CARD_CVV_INPUT)
+        card_cvv_input.click()
+        card_cvv_input.press_sequentially(card_cvv, delay=100)
+        
+        return self
+    
+    def submit_credit_card_payment(self) -> "ParkingTicketPage":
+        """點擊確認送出信用卡付款。"""
+        btn = self.page.locator(self.credit_card.PAYMENT_BUTTON)
+        btn.wait_for(state="visible", timeout=10000)
+        btn.click()
+        self.wait_page_ready()
+        return self
+    
+    def complete_3ds_verification(self, otp_code: str = "1234567") -> "ParkingTicketPage":
+        """完成 3DS 驗證。
+        
+        Args:
+            otp_code: OTP 驗證碼，預設為 TapPay 測試碼 1234567
+        """
+        # 等待 OTP 輸入欄位出現
+        otp_input = self.page.locator(self.three_ds.OTP_INPUT)
+        otp_input.wait_for(state="visible", timeout=30000)
+        otp_input.click()
+        otp_input.fill(otp_code)
+        
+        # 點擊送出
+        send_btn = self.page.locator(self.three_ds.SUBMIT_BUTTON)
+        send_btn.wait_for(state="visible", timeout=10000)
+        send_btn.click()
+        
+        self.wait_page_ready()
+        return self
+    
+    def assert_payment_success(self, timeout: int = 30000) -> None:
+        """驗證繳費成功訊息出現。
+        
+        Args:
+            timeout: 等待超時時間（毫秒）
+        """
+        success_msg = self.page.locator(self.success_page.SUCCESS_MESSAGE)
+        expect(success_msg).to_be_visible(timeout=timeout)
